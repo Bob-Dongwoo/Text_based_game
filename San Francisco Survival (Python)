@@ -1,0 +1,736 @@
+"""
+Created on Thu Oct 18 18:18:18 2019
+@author: Bob (Dongwoo) Kang
+"""
+"""
+    Docstring:
+    
+    A) Introduction:
+    This game is dedicated to all the Hult students who are staying in the 
+    expensive city of San Francisco. The game is targeted to give the students
+    some kind of an idea how they should plan their budgets. The, game can't 
+    cover every aspect of students' spending but to give a general idea about 
+    what can happen throughout their time. The game will only last for 3 months
+    from October 1st to December 31st due to time restrictions. Each month is 
+    considered as stages. Your object is to survive every stage with the budget
+    that you have planned in the start. Any feedbacks is welcomed and hope 
+    you have fun.
+    
+    B) Known Bugs and/or Errors:
+    None.
+    
+"""
+
+import time
+from sys import exit
+import re
+
+name = ""
+duration = 3
+budget = 0
+monthly = 0
+housing = 0
+transport = 0
+food = 0
+balance1 = 0
+balance2 = 0
+balance3 = 0
+additional_spending = []
+
+def intro():
+    print("""
+Welcome to the game 'San Francisco Survival'! San Francisco is the one of the most
+expensive cities in United States. Your job is to survive with your budget for
+3 months from October 1st to December 31st.
+""")
+    global name
+    name = input('So, what is your name?\n')
+    print(f'\nWelcome to the game {name}')
+
+def setting():
+    #Using global variable to set up the value in setting
+    global budget
+    global housing
+    global duration
+    global transport
+    global food
+    global monthly
+    global balance1
+    while True:
+        print("""
+How much is your total budget during your stay?
+(please specify a number in US dollars)""")
+
+        budget = input()
+        #In case users use $ or , in budget
+        if '$' in budget or ',' in budget:
+            budget = re.sub("[^\d\.]", "", budget)
+            budget = int(budget)
+            print(f"\nYour budget is ${budget} during your {duration} months of stay")
+            break
+
+        else:
+            try:
+                int(budget)
+                budget = int(budget)
+                print(f"\nYour budget is ${budget} during your {duration} months of stay")
+                break
+            
+            except:
+                print("Uh oh, it's not a number")
+                continue
+    #Give information about monthly average budget and comment on whether the available monthly average budget is good enough 
+    monthly = budget/duration
+    print(f"\nYour average monthly budget is ${round(monthly, 0)}.")
+    if monthly <= 1000:
+        print(f"Please be serious, ${round(monthly, 0)} is not enough to live in anyplace in US." )
+    elif monthly <= 2000:
+        print(f"""
+You know that your living in San Francisco, one of the most expensive cities in US.
+${round(monthly,0)} is not going to be easy.
+""")
+    elif monthly <= 3000:
+        print(f"${round(monthly, 0)} seems reasonable.")
+    else:
+        print(f"Wow! ${round(monthly, 0)} is a lot!")
+
+    while True:
+        print(f"""\n{name} housing can be very expensive in San Francisco.""")
+        housing = input("How much are you willing to spend?(Please specify in numbers)\n")
+        try: 
+            housing = re.sub("[^\d\.]", "", housing)
+            housing = int(housing)
+            if housing <= 700 and housing >= 0:
+                print("Smaller than $700 doesn't seem right are you sure?")
+                select = input("Select 'yes' or 'no'\n")
+                if 'y' in select or 'Y' in select:
+                    break
+                else:
+                    continue
+
+            elif housing <= 0:
+                print("Uh oh somethings wrong try again")
+                continue
+            else:
+                break
+        except:
+            print("Please specify in numbers")
+            continue
+
+    while True:
+        print(f"""\nTransportation in San Francisco can be very difficult.
+How will you going around in San Francisco?
+Please choose from the following options
+    1. Uber/Lyft ($15 per day)
+    2. Public transportation ($5 per day)
+    3. Biking($1 per day)
+    4. Walking(0)
+""")
+    
+        transportation = input().lower()
+        if 'uber' in transportation or 'lyft' in transportation or '1' in transportation:
+            transport = 15
+            print("You chose Uber or Lyft.\n")
+            break
+      
+        elif 'pu' in transportation or '2' in transportation:
+            transport = 5
+            print("You chose public transportation.")
+            print("""TIP: Did you know you can save $0.5 on every ride if you use the Clipper Card?
+The Clipper Card is only 3 dollars.\n""")
+            break
+      
+        elif 'bi' in transportation or '3' in transportation:
+            transport = 1
+            print("You chose to bike. You must be very strong.\n")
+            break
+      
+        elif 'wa' in transportation or '4' in transportation:
+            transport = 0
+            print("You chose to walk. Good luck.\n")
+            break
+        
+        else:
+            print("Uh oh somethings wrong please choose from the following choices.\n")
+            continue
+    while True:
+        print("""Food is important in our daily lives. Sometimes it is more convenient 
+to eat outside. However, it is also more costly. Whereas cooking maybe 
+time consuming but also, a cheaper way to live in an expensive city
+like San Francisco. Please choose from the following options.
+    1. Buy your daily meal ($25 per day)
+    2. Mix of cooking and buying meal ($18 per day)
+    3. Mainly cooking ($12 per day)
+    """)
+        food = input().lower()
+        if '1' in food or 'buy' in food:
+            food = 25
+            print("You decided to buy your meal.\n")
+            break
+        
+        elif '2' in food or 'mix' in food:
+            food = 18
+            print("You decided to mix between buying and cooking your meal.\n")
+            break
+        
+        elif '3' in food or 'cook' in food:
+            food = 12
+            print("You decided to cook your daily meal.\n")
+            break
+    
+        else:
+            print("Uh oh somethings wrong please choose from the following choices.\n")
+            continue
+    # Show overall chocies made by user
+    print(
+f"""So {name}, you have chose the following:
+You are going to stay in San Francisco for {duration} months.
+You are expected to spend ${budget} during your stay, average of ${round(monthly, 0)} per month.
+You are going to spend ${housing} per month on your accomodation.
+You are going to spend ${transport} per day on transportation.
+You are going to spend ${food} per day on your meals.
+""")
+    input('<Press Enter to Continue>\n')
+
+# month of October
+
+def october():
+    # Bring in global variables to make calculations
+    global budget
+    global housing
+    global duration
+    global transport
+    global food
+    global monthly
+    global balance1
+    global additional_spending
+    print(f"""Oct 1, Accomodation: -${housing}  Transportaion: -${transport}  Food: -${food}""")
+    # For loop to show time is moving
+    for i in range(2, 6):
+        print(f"""Oct {i}, Transportaion: -${transport}  Food: -${food}""")
+        time.sleep(0.2)
+    while True:
+        print(f"""Oct 6, Transportaion: -${transport}  Food: -${food}
+
+Event! You are invited to hang out with your friends at a bar.
+What are you going to do?
+    1. Go to the bar and hang out (You spend $15)
+    2. Maybe later
+""")
+        friends = input().lower()
+        if '1' in friends or 'go' in friends or 'bar' in friends:
+            friends = 15
+            additional_spending.append(friends)
+            print("You decided to hang out with your friends.\n")
+            break
+        elif '2' in friends or 'ma' in friends:
+            friends = 0
+            print("You decided to keep it for later.\n")
+            break
+        else:
+            print("Please select in the given choice.")
+            continue
+    time.sleep(0.2)
+    for j in range(7, 10):
+        print(f"""Oct {j}, Transportaion: -${transport}  Food: -${food}""")
+        time.sleep(0.2)
+    while True:    
+        print(f"""Oct 11, Transportaion: -${transport}  Food: -${food}
+
+Event! Your team has decided to have a team building dinner out!
+    1. Go out for dinner with your teammates (You spend $15)
+    2. Maybe later
+""")
+        team_building = input().lower()
+        if '1' in team_building or 'go' in team_building or 'din' in team_building:
+            team_building = 15
+            additional_spending.append(team_building)
+            print("You decided to hang out with your teammates.\n")
+            break
+            
+        elif '2' in team_building or 'ma' in team_building:
+            team_building = 0
+            print("You decided to keep it for later.\n")
+            break
+            
+        else:
+            print("Please select in the given choice.")
+            continue
+    time.sleep(0.2)
+    for k in range(15, 25):
+        print(f"""Oct {k}, Transportaion: -${transport}  Food: -${food}""")
+        time.sleep(0.2)
+    while True:
+        print(f"""Oct 25, Transportaion: -${transport}  Food: -${food}
+
+Event! You are working on your team assignment with your teammates!
+You are stuck late at night on campus until you finish your assignment.
+Your teammates are hungry and decided to order pizza.
+    1. Join in for pizza with teammates (You spend $15)
+    2. Maybe later
+""")
+        team_pizza = input().lower()
+        if '1' in team_pizza or 'piz' in team_pizza or 'join' in team_pizza:
+            team_pizza = 15
+            additional_spending.append(team_pizza)
+            print("You decided to have late night pizza with your teammates.\n")
+            break
+            
+        elif '2' in team_pizza or 'ma' in team_pizza:
+            team_pizza = 0
+            print("You decided to keep it for later.\n")
+            break
+            
+        else:
+            print("Please select in the given choice.")
+            continue
+            
+    time.sleep(0.2)
+    for l in range(26, 31):
+        print(f"""Oct {l}, Transportaion: -${transport}  Food: -${food}""")
+        time.sleep(0.3)
+    while True:
+        print(f"""Oct 31, Transportaion: -${transport}  Food: -${food}
+
+Event! It is halloween! Halloween is a big party night for United States.
+There will be costume parties in the city. Although it is recommended to 
+wear costumes,it is up to you.
+    1. Buy costume and attend party (You spend $60)
+    2. Just go for the party (You spend $30)
+    3. Maybe later
+""")
+        halloween = input().lower()
+        if '1' in halloween or 'buy' in halloween or 'cos' in halloween:
+            halloween = 60
+            additional_spending.append(halloween)
+            print("You decided to wear costumes and attend the party Looking forward for your costume.\n")
+            break
+            
+        elif '2' in halloween or 'go' in halloween or 'jus' in halloween:
+            halloween = 30
+            additional_spending.append(halloween)
+            print("You decided to go to the party without costumes. Have fun!\n")
+            break
+            
+        elif '3' in halloween or 'ma' in halloween:
+            halloween = 0
+            print("You decided to keep it for later.\n")
+            break
+            
+        else:
+            print("Please select in the given choice.")
+            continue
+            
+     # Calculate the expenses in the end of October
+    additional_spending1 = friends + team_building + team_pizza + halloween
+    print(f"""It is end of the month of October.{name} you spent the following.
+Accomodation: ${housing}
+Transportaion: ${transport * 31}
+Food: ${food * 31}
+Additional spending: ${additional_spending1}
+Total spending: ${housing + (transport * 31) + (food * 31) + additional_spending1}
+""")
+    balance1 = budget - housing - (transport * 31) - (food * 31) - additional_spending1
+    print(f"The remaining balance is ${balance1}.")
+    if balance1 > 0:
+        print("You made it through the month of October! Good job!")
+    else:
+        fail()
+        
+# month of November
+
+def november():
+     # Bring in global variables to make calculations
+    global budget
+    global housing
+    global duration
+    global transport
+    global food
+    global monthly
+    global balance1
+    global balance2
+    global additional_spending
+    print(f"""Nov 1, Accomodation: -${housing}  Transportaion: -${transport}  Food: -${food}""")
+    for i in range(2, 8):
+        print(f"""Nov {i}, Transportaion: -${transport}  Food: -${food}""")
+        time.sleep(0.2)
+    while True:
+        print(f"""Nov 8, Transportaion: -${transport}  Food: -${food}
+
+Event! You are invited to hang out with your friends at a club.
+What are you going to do?
+    1. Go to the club and hang out (You spend $20)
+    2. Maybe later
+""")
+        friends2 = input().lower()
+        if '1' in friends2 or 'go' in friends2 or 'club' in friends2:
+            friends2 = 20
+            additional_spending.append(friends2)
+            print("You decided to hang out at a club with your friends.\n")
+            break
+            
+        elif '2' in friends2 or 'ma' in friends2:
+            friends2 = 0
+            print("You decided to keep it for later.\n")
+            break
+            
+        else:
+            print("Please select in the given choice.")
+            continue
+            
+    time.sleep(0.2)
+    for j in range(9, 23):
+        print(f"""Nov {j}, Transportaion: -${transport}  Food: -${food}""")
+        time.sleep(0.2)
+    while True:    
+        print(f"""Nov 23, Transportaion: -${transport}  Food: -${food}
+
+Event! Winter ball is happening! In order to attend dress in your fancy 
+outfits to hang out with your classmates.
+    1. Go to the Winter Ball to hang out and network (You spend $40)
+    2. Maybe later
+""")
+        winter_ball = input().lower()
+        if '1' in winter_ball or 'go' in winter_ball or 'wi' in winter_ball:
+            winter_ball = 40
+            additional_spending.append(winter_ball)
+            print("You decided to go to the Winter ball.\n")
+            break
+            
+        elif '2' in winter_ball or 'ma' in winter_ball:
+            winter_ball = 0
+            print("You decided to keep it for later.\n")
+            break
+            
+        else:
+            print("Please select in the given choice.")
+            continue
+            
+    time.sleep(0.2)
+    for k in range(24, 28):
+        print(f"""Nov {k}, Transportaion: -${transport}  Food: -${food}""")
+        time.sleep(0.2)
+    while True:
+        print(f"""Nov 28, Transportaion: -${transport}  Food: -${food}
+
+Event! It is Thanksgiving! One of the biggest holiday in United States!
+You are invited to your friends place to hang out and have a fun time. 
+
+    1. Go to the Thanksgiving Praty (You spend $20)
+    2. Maybe later
+""")
+        thanks_giving = input().lower()
+        if '1' in thanks_giving or 'go' in thanks_giving or \
+        'party' in thanks_giving or 'thanks' in thanks_giving:
+            thanks_giving = 20
+            additional_spending.append(thanks_giving)
+            print("You decided to celebrate Thanksgiving with your close friends.")
+            print("""
+TIP: During Thanks giving all the store will be closed for the holidays.
+It will be good if you shop in advance.""")
+            break
+        elif '2' in thanks_giving or 'ma' in thanks_giving:
+            thanks_giving = 0
+            print("You decided to keep it for later.\n")
+            break
+        else:
+            print("Please select in the given choice.")
+            continue
+    time.sleep(0.2)
+    while True:
+        print(f"""Nov 29, Transportaion: -${transport}  Food: -${food}
+
+Event! It is Black Friday! The biggest shopping day for United States!
+If you like shopping it is a great chance for you! Also, if you don't care
+too much about shopping it is still a good chance to buy any goods. 
+Please specify how much you want to spend in Black Friday in numbers.
+""")
+        black_friday = input()
+        try:
+            black_friday = re.sub("[^\d\.]", "", black_friday)
+            black_friday = int(black_friday)
+            if black_friday == 0:
+                print("Too bad you are missing this big chance.")
+                break
+            elif black_friday > 0:
+                print(f"""You are spending ${black_friday} on Black Firday. 
+Have fun!! Hope you find something good!""")
+                additional_spending.append(black_friday)
+                break
+            elif black_friday < 0:
+                print("Uh oh, something is not right. Please try again")
+                continue
+            else:
+                print("Uh oh, something is not right. Please try again")
+                continue
+        
+        except:
+            print("Uh oh, something is not right. Please try again")
+            continue
+    time.sleep(0.2)
+
+    for l in range(31, 32):
+        print(f"""Nov {l}, Transportaion: -${transport}  Food: -${food}""")
+        time.sleep(0.2)
+     # Calculate the expenses in the end of November
+    additional_spending2 = friends2 + winter_ball + thanks_giving + black_friday
+    print(f"""It is end of the month of November.{name} you spent the following.
+Accomodation: ${housing}
+Transportaion: ${transport * 30}
+Food: ${food * 30}
+Additional spending: ${additional_spending2}
+Total spending: ${housing + (transport * 30) + (food * 30) + additional_spending2}
+""")
+    balance2 = balance1 - housing - (transport * 30) - (food * 30) - additional_spending2
+    print(f"The remaining balance is ${balance2}.")
+    if balance2 > 0:
+        print("You made it through the month of November! Good job!")
+    else:
+        fail()
+
+
+def december():
+    # Bring in global variables to make calculations
+    global housing
+    global duration
+    global transport
+    global food
+    global monthly
+    global balance2
+    global balance3
+    global additional_spending
+    print(f"""Dec 1,
+Accomodation: -${housing}  Transportaion: -${transport}  Food: -${food}""")
+    for i in range(2, 12):
+        print(f"""Dec {i}, Transportaion: -${transport}  Food: -${food}""")
+        time.sleep(0.2)
+    while True:
+        print(f"""Dec 12, Transportaion: -${transport}  Food: -${food}
+
+Event! You are about to finish your finals of the year. You are spending all 
+night stuck in campus until you finish your assignment. Your teammates are 
+hungry and decided to order pizza.
+    1. Join in for pizza with teammates (You spend $15)
+    2. Maybe later
+""")
+        team_pizza2 = input().lower()
+        if '1' in team_pizza2 or 'piz' in team_pizza2 or 'join' in team_pizza2:
+            team_pizza2 = 15
+            additional_spending.append(team_pizza2)
+            print("You decided to have late night pizza with your teammates.\n")
+            break
+            
+        elif '2' in team_pizza2 or 'ma' in team_pizza2:
+            team_pizza2 = 0
+            print("You decided to keep it for later.\n")
+            break
+        else:
+            print("Please select in the given choice.")
+            continue
+    time.sleep(0.2)
+    for j in range(13, 17):
+        print(f"""Dec {j}, Transportaion: -${transport}  Food: -${food}""")
+        time.sleep(0.2)
+    while True:    
+        print(f"""Dec 17, Transportaion: -${transport}  Food: -${food}
+
+Event! Your first module of the academic year has finally ended!! 
+Your class mates have decided to throw a party to celebrate!
+    1. Join the party (You spend $20)
+    2. Maybe later
+""")
+        party = input().lower()
+        if '1' in party or 'join' in party or 'par' in party:
+            party = 20
+            additional_spending.append(party)
+            print("You decided to hang out with your classmates.\n")
+            break
+        elif '2' in party or 'ma' in party:
+            party = 0
+            print("You decided to keep it for later.\n")
+            break
+        else:
+            print("Please select in the given choice.")
+            continue
+            
+    time.sleep(0.2)
+
+    for k in range(18, 20):
+        print(f"""Dec {k}, Transportaion: -${transport}  Food: -${food}""")
+        time.sleep(0.2)
+    while True:
+        print(f"""Dec 20, Transportaion: -${transport}  Food: -${food}
+
+Event! It is Christmas Vacation. You can spend your time traveling to your home 
+country or other parts of United States or stay and enjoy your relaxing vacations.
+
+    1. Travel and enjoy (You spend $1500)
+    2. Stay and enjoy
+""")
+        vacation = input().lower()
+        if '1' in vacation or 'tra' in vacation:
+            vacation = 1500
+            additional_spending.append(vacation)
+            print("You decided to travel to somewhere. Have fun!")
+            break
+            
+        elif '2' in vacation or 'stay' in vacation:
+            vacation = 0
+            print("You decided to stay in San Francisco. Enjoy your stay!\n")
+            break
+            
+        else:
+            print("Please select in the given choice.")
+            continue
+            
+    time.sleep(0.2)
+    for l in range(21, 32):
+        print(f"""Dec {l}, Transportaion: -${transport}  Food: -${food}""")
+        time.sleep(0.2)
+    # Calculate the expenses in the end of December
+    additional_spending3 = team_pizza2 + party + vacation
+    print(f"""It is end of the month of December.{name} you spent the following.
+Accomodation: ${housing}
+Transportaion: ${transport * 31}
+Food: ${food * 31}
+Additional spending: ${additional_spending3}
+Total spending: ${housing + (transport * 31) + (food * 31) + additional_spending3}
+""")
+    balance3 = balance2 - housing - (transport * 31) - (food * 31) - additional_spending3
+    print(f"The remaining balance is ${balance3}.")
+    if balance3 >= 0:
+        print("You made it through the month of December! Good job!")
+    else:
+        fail()
+
+def easter_egg():
+    print("""
+    .-.     wWw  wWw(o)__(o) oo_   (o)__(o)    \\\  ///   _ wW  Ww\\\  ///   \/    
+  c(O_O)c   (O)  (O)(__  __)/  _)-<(__  __)/)  ((O)(O)) _||\(O)(O)((O)(O))  (OO)   
+ ,'.---.`,  / )  ( \  (  )  \__ `.   (  )(o)(O) | \ || (_'\  (..)  | \ || ,'.--.)  
+/ /|_|_|\ \/ /    \ \  )(      `. |   )(  //\\  ||\\|| .'  |  ||   ||\\||/ /|_|_\  
+| \_____/ || \____/ | (  )     _| |  (  )|(__)| || \ |((_) | _||_  || \ || \_.--.  
+'. `---' .`'. `--' .`  )/   ,-'   |   )/ /,-. | ||  || `-`.)(_/\_) ||  ||'.   \) \ 
+  `-...-'    `-..-'   (    (_..--'   (  -'   ''(_/  \_)   (       (_/  \_) `-.(_.' 
+""")
+    print(f"""
+{name} you just maxed out your score. Please take the screen shot and meet 
+Bob!! He will buy you a coffee! (Valid only once per person)
+""")
+    input('<Press any key to exit>\n')
+    exit(0)
+
+def performance_report():
+    # Calculate the overall performance
+    global budget
+    global balance1
+    global balance2
+    global balance3
+    
+    print(f"{name}, you made it through the three months in San Francisco!")
+    october_spending = budget - balance1
+    november_spending = balance1 - balance2
+    december_spending = balance2 - balance3
+    print(f"""
+This is your spending of three months!
+October:  ${october_spending}
+November: ${november_spending}
+December: ${december_spending}
+Total: ${october_spending + november_spending + december_spending}""")
+    score = round((october_spending + november_spending + december_spending)/budget * 100, 2)
+    extra = len(additional_spending)
+    # Show points earned to show user's performance
+    print(f"""
+Your score is \033[1m{score}/100\033[0m with additional bonus score of 
+\033[1m{extra}/11\033[0m  points. Total of \033[1m{score + extra}/111\033[0m points!""")
+    if score < 60:
+        print("""
+Your budget is unnecessarily too high compared to 
+your spending you need better budget management.
+""")
+    elif score >= 60 and score < 90:
+        print("""
+Your budget planning reasonable but you can make it more efficient.
+""")
+    else:
+        print("""
+Wow! Your budget management is amazing!! You can predict your budget within %10 range.
+""")
+    if extra < 5:
+        print("""
+Boring!! You spent your 3 months without play or making friends.
+""")
+    elif extra >= 5 and extra <= 8:
+        print("""
+You had reasonable social life with your friends and classmates.
+""")
+    else:
+        print("""
+Wow! You know how to enjoy your life!
+""")
+    if score < 60 and extra < 5:
+        print("""
+Overall, you don't have a good budget management skills and no social life.
+""")
+    elif score < 60 and extra >= 5 and extra<= 8:
+        print("""
+Overall you don't have a good budget management skill but have some kind of social life.
+""")
+    elif score < 60 and extra > 9:
+        print("""
+Overall you don't have a good budget management skill but you know how to enjoy your life.
+""")
+    elif score >= 60 and score < 90 and extra < 5:
+        print("""
+Overall, you can manage your budget however, you have no social life.
+""")
+    elif score >= 60 and score < 90 and extra >= 5 and extra<= 8:
+        print("""
+Overall, you can manage your budget, and have a decent social life.
+""")
+    elif score >= 60 and score < 90 and extra > 9:
+        print("""
+Overall, you can manage your budget, and you know how to enjoy your life.
+""")
+    elif score > 90 and extra < 5:
+        print("""
+Overall, you have great budget management skills however, you have no social life.
+""")
+    elif score > 90 and extra >= 5 and extra<= 8:
+        print("""
+Overall, you have great budget management skills, and have a decent social life.
+""")
+    elif score == 100 and extra == 11:
+        easter_egg()
+    else:
+        print("""
+Overall, you have great budget management skills, and know how to enjoy your life.
+""")
+    print("Thanks for playing the game and hope it was helpful planning your budget.")
+    input('<Press any key to exit>\n')
+    exit(0)
+# Fail sequence when users over spend their budget
+def fail():
+    while True:
+        print("You are broke! Game Over!")
+        restart = input("Would you like to restart the game?[y/n]\n").lower()
+        if 'y' in restart or 'yes' in restart:
+            october()
+        elif 'n' in restart or 'no' in restar:
+            exit(0)
+        else:
+            print("Please choose between yes or no")
+            continue
+    
+# Game Start
+
+intro()
+setting()
+print("Now lets start the game from October 1st.")
+october()
+input('<Press Enter to Continue>\n')
+november()
+input('<Press Enter to Continue>\n')
+december()
+input('<Press Enter to Continue>\n')
+performance_report()
