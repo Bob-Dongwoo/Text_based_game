@@ -1,2 +1,2 @@
 # Text_based_game
-Text game created from python for school assignment
+This is a text game created from python for school assignment
